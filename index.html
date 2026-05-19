@@ -3,272 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedagogika Tarixi Testi - 153 Savol</title>
+    <title>Rivojlanish Psixologiyasi - Elektron Test Tizimi</title>
     <style>
         :root { --primary: #00f2fe; --secondary: #4facfe; --correct: #00ff88; --wrong: #ff4b2b; --bg: #0b0e14; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { 
-            margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; 
-            background: var(--bg); color: #fff;
-        }
-        .container { width: 100%; max-width: 800px; padding: 20px; }
-        .quiz-card {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px;
-            border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-        .progress-bar { 
-            width: 100%; height: 8px; background: rgba(255,255,255,0.1); 
-            border-radius: 10px; margin-bottom: 30px; overflow: hidden; 
-        }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: 0.4s; }
-        #q-info { color: var(--secondary); font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; }
-        h2 { font-size: 1.25rem; line-height: 1.4; margin-bottom: 30px; }
-        .options { display: grid; gap: 15px; }
-        .opt { 
-            background: rgba(255, 255, 255, 0.08); padding: 18px; border-radius: 15px; 
-            cursor: pointer; border: 1px solid transparent; transition: 0.3s;
-        }
-        .opt:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--primary); }
-        .opt.correct { background: var(--correct) !important; color: #000; font-weight: bold; }
-        .opt.wrong { background: var(--wrong) !important; color: #fff; }
-        .footer { margin-top: 30px; text-align: center; }
-        .finish-btn { 
-            background: transparent; color: #ff4b2b; border: 1px solid #ff4b2b;
-            padding: 10px 25px; border-radius: 50px; cursor: pointer; font-size: 0.85rem;
-        }
-        #result { display: none; text-align: center; }
-        .score-val { font-size: 4rem; color: var(--primary); font-weight: 800; }
-        .restart { 
-            background: var(--primary); color: #000; border: none; 
-            padding: 15px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 20px;
-        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--bg); color: #fff; }
+        .container { width: 100%; max-width: 850px; padding: 20px; }
+        .card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); display: none; }
+        .active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        input { width: 100%; padding: 15px; margin: 10px 0 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 1rem; outline: none; }
+        .btn { width: 100%; padding: 16px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; margin-top: 10px; text-transform: uppercase; }
+        .btn-primary { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000; }
+        .btn-danger { background: rgba(255, 75, 43, 0.2); border: 1px solid var(--wrong); color: var(--wrong); margin-top: 20px; }
+        .counter-badge { background: var(--primary); color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .table-container { max-height: 300px; overflow-y: auto; margin: 20px 0; border-radius: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { color: var(--primary); position: sticky; top: 0; background: #1a1d24; }
+        
+        tr:nth-child(1) td:first-child { color: #ffd700; font-weight: bold; font-size: 1.2rem; }
+        tr:nth-child(2) td:first-child { color: #c0c0c0; font-weight: bold; }
+        tr:nth-child(3) td:first-child { color: #cd7f32; font-weight: bold; }
+        .my-row { background: rgba(0, 242, 254, 0.15) !important; border-left: 4px solid var(--primary); }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: 0.4s; }
+        .options { display: grid; gap: 12px; }
+        .opt { background: rgba(255, 255, 255, 0.07); padding: 16px; border-radius: 15px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+        .opt:hover { background: rgba(255, 255, 255, 0.12); border-color: var(--primary); }
+        .correct { background: var(--correct) !important; color: #000; font-weight: bold; }
+        .wrong { background: var(--wrong) !important; }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <div class="quiz-card" id="quiz-box">
-        <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
-        <div id="q-info">Savol 1 / 153</div>
-        <h2 id="q-text">Yuklanmoqda...</h2>
-        <div class="options" id="opt-box"></div>
-        <div class="footer"><button class="finish-btn" onclick="showFinalResult()">Testni tugatish</button></div>
+    <div id="login-card" class="card active">
+        <h1 style="text-align:center">Tizimga Kirish</h1>
+        <p style="text-align:center; color:#aaa">Ismingizni kiriting va testni boshlang</p>
+        <input type="text" id="user-name" placeholder="Ismingiz va familiyangiz...">
+        <button class="btn btn-primary" onclick="handleLogin()">Kirish</button>
     </div>
 
-    <div class="quiz-card" id="result">
-        <h1>Natijangiz</h1>
-        <div class="score-val" id="score-text">0</div>
-        <p id="stat-desc"></p>
-        <button class="restart" onclick="location.reload()">Qayta boshlash</button>
+    <div id="lobby-card" class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 id="welcome-user">Salom!</h2>
+            <div class="counter-badge">Ishtirokchilar: <span id="total-players">0</span></div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>№</th><th>Ishtirokchi</th><th>Ball</th></tr></thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary" onclick="startQuiz()">TESTNI BOSHLASH</button>
+    </div>
+
+    <div id="quiz-card" class="card">
+        <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+        <div id="q-info" style="color:var(--secondary); font-weight:bold; margin-bottom:10px;"></div>
+        <h2 id="q-text" style="min-height: 60px; font-size: 1.1rem;"></h2>
+        <div class="options" id="opt-box"></div>
+        <button class="btn btn-danger" onclick="finishQuiz()">Testni yakunlash</button>
+    </div>
+
+    <div id="result-card" class="card" style="text-align:center;">
+        <h1>Yakuniy Natija</h1>
+        <div style="font-size: 4rem; color: var(--primary); font-weight: 800;" id="final-score">0</div>
+        <p id="final-desc"></p>
+        <button class="btn btn-primary" onclick="showLobby()">Reytingga qaytish</button>
     </div>
 </div>
 
 <script>
+    let currentUser = "";
+    let score = 0;
+    let currentIdx = 0;
+
     const questions = [
-        {q: "“Agar xar kishi qunt bilan mehnat qilsa, u o‘ziga nisbatan talabchan bo‘lsa, u yaxshi pedagog bo‘lishi mumkin” fikr muallifi?", a: "Farobiy", d: ["Ibn Sino", "Beruniy", "Navoiy"]},
-        {q: "“Al-Jome-as sahih” asrining muallifi?", a: "Imom Buxoriy", d: ["Imom Termiziy", "Imom Muslim", "Zamaxshariy"]},
-        {q: "“Al-kutub as-sita” so’zining manosi nima?", a: "Olti ishonchli kitob", d: ["Oltita fan", "Olti hikmat", "Olti olim"]},
-        {q: "“As-sahih” to‘plami qaysi muhaddis – vatandoshimiz ijodiga mansub?", a: "Al-Buxoriy", d: ["At-Termiziy", "Nasaiy", "Moturidiy"]},
-        {q: "Inson foniy, ya’ni «analhaq» bo‘la oladi - so’fiylikning qaysi bosqichi?", a: "4 bosqich (haqiqat va fono)", d: ["1 bosqich", "2 bosqich", "3 bosqich"]},
-        {q: "“Buyuk didaktika“, “Onalar maktabi“ asarlarini kim yozgan?", a: "Kommenskiy", d: ["Lokk", "Pestalotsi", "Ushinskiy"]},
-        {q: "“Shariat qonun bo‘lib, bu qonun vujudni va qalbni tarbiyalaydi” - so’fiylikning qaysi bosqichi?", a: "1 bosqich (Shariat)", d: ["2 bosqich", "3 bosqich", "4 bosqich"]},
-        {q: "“Efeblar” qanday muassasa bo‘lgan?", a: "Qadimgi Yunonistonda 18-20 yoshlilar uchun harbiy tayyorgarlik", d: ["Boshlang'ich maktab", "Diniy madrasa", "Kutubxona"]},
-        {q: "“Ey o’g’il, farzandlaringni tarbiyalashdan oldin o’zingni tarbiyala” - qaysi asarda?", a: "Kaykovus, Qobusnoma", d: ["Farobiy, Fozil odamlar", "Navoiy, Mahbub ul-qulub", "Ibn Sino, Tib qonunlari"]},
-        {q: "“Fozil odamlar shahri” va “Ruhiy madaniyat haqida risola” muallifi kim?", a: "Forobiy", d: ["Ibn Sino", "Beruniy", "Navoiy"]},
-        {q: "Odam orif, ya’ni bilimli, xudoni tanigan bo'ladi - so’fiylikning qaysi bosqichi?", a: "3 bosqich (Ma’rifat)", d: ["1 bosqich", "2 bosqich", "4 bosqich"]},
-        {q: "“Juvonmardlik asli 3 narsadir...” Ushbu fikrning muallifi kim?", a: "Kaykovus, Qobusnoma", d: ["Ahmad Yassaviy", "Alisher Navoiy", "Abdurahmon Jomiy"]},
-        {q: "“Muallimi soniy” (ikkinchi muallim) taxallusini olgan alloma?", a: "Forobiy", d: ["Arastu", "Ibn Sino", "Beruniy"]},
-        {q: "“Mudarris” soʻzini ma’nosi nima?", a: "Dars beruvchi (arabcha)", d: ["O'quvchi", "Kitob yozuvchi", "Hukmdor"]},
-        {q: "“Mudarris ota-onaning mansabi, boyligiga qarab bolaga muomala qilmasligi kerak”. Kimniki?", a: "Farobiy", d: ["Navoiy", "Avloniy", "Ibn Sino"]},
-        {q: "“Muhaddislar imomi” unvonini olgan muhaddis kim?", a: "Imom Buxoriy", d: ["Imom Muslim", "Imom Termiziy", "Nasaiy"]},
-        {q: "Tariqat - fano, o‘zdan kechish, ko‘ngilni poklovchi yo‘l - so’fiylik bosqichi?", a: "2 bosqich (Tariqat)", d: ["1 bosqich", "3 bosqich", "4 bosqich"]},
-        {q: "“Padarkush” asari kimning qalamiga mansub?", a: "Behbudiy", d: ["Fitrat", "Avloniy", "Cho'lpon"]},
-        {q: "“Pedagogik mahorat” nima?", a: "Kasbiy faoliyatni yuksak darajada, ijodiy va san’atkorona tashkil etish", d: ["Faqat dars o'tish", "Bolalarni jazolash", "Ko'p kitob o'qish"]},
-        {q: "“Qobusnoma” asari muallifi?", a: "Kaykovus", d: ["Nizomiy", "Jomiy", "Sadiy"]},
-        {q: "“Qutadg`u bilig” ma`nosi nima?", a: "Saodatga eltuvchi bilim", d: ["Baxtli hayot", "Davlat qonunlari", "Tarixiy xotira"]},
-        {q: "“Qutadg‘u bilig” muallifi?", a: "Yusuf Xos Hojib", d: ["Ahmad Yugnakiy", "Lutfiy", "Sakkokiy"]},
-        {q: "Ta’lim nazariy, tarbiya esa amaliy fazilatlarni birlashtirishdir. Kimniki?", a: "Forobiy", d: ["Ibn Sino", "Beruniy", "Xorazmiy"]},
-        {q: "“Takrorlash bilimning asosidir” iborasi kimga tegishli?", a: "Ushinskiy", d: ["Komenskiy", "Makarenko", "Pestalotsi"]},
-        {q: "“Tizim” so’zi haqida tushuncha?", a: "Yagona maqsad yoʻlida bogʻliq elementlar toʻplami", d: ["Tartib-intizom", "Dars jadvali", "Maktab binosi"]},
-        {q: "“Turkiy Guliston yoxud axloq” asari g'oyalari?", a: "Ilm-ma’rifat, yuksak axloq, vatanparvarlik", d: ["Urush va tinchlik", "Savdo ishlari", "She'riyat qoidalari"]},
-        {q: "“Turkiy Guliston yoxud axloq” muallifi?", a: "Abdulla Avloniy", d: ["Behbudiy", "Fitrat", "Hamza"]},
-        {q: "“Ustoz shogirdlariga qattiq zulm ham, o’ta ko’ngilchanlik ham qilmasligi kerak”.", a: "Forobiy", d: ["Navoiy", "Ibn Sino", "Beruniy"]},
-        {q: "“Birinchi muallim”, “Ikkinchi muallim” kabi darsliklarni kim yaratgan?", a: "Abdulla Avloniy", d: ["Munavvarqori", "Ibrat", "Behbudiy"]},
-        {q: "“Zafarnoma” asarining muallifi?", a: "Nizomiddin Shomiy va Sharafiddin Ali Yazdiy", d: ["Amir Temur", "Ulug'bek", "Navoiy"]},
-        {q: "“Ziji ko’ragoniy” asari nusxasini Istambulda kim chop ettiradi?", a: "Ali Qushchi", d: ["Ulug'bek", "Beruniy", "Qozizoda Rumiy"]},
-        {q: "”Kimga pand-nasihat qilsang, unga avvalo o`zing amal qil” muallifi?", a: "Abdulla Avloniy", d: ["Behbudiy", "Hamza", "Fitrat"]},
-        {q: "”Mehnat axloqiylikni asosi, saxovatlilik belgisi” qaysi manbada?", a: "Avesto", d: ["Qur'on", "Qobusnoma", "Xamsa"]},
-        {q: "«Bilim olish har bir musulmon ayol va erkakning burchidir» yozuvi qayerda?", a: "Buxorodagi Ulug‘bek madrasasi", d: ["Registon", "Mir-Arab", "Ko'kaldosh"]},
-        {q: "«Odob as-solihin» asari muallifi?", a: "Muhammad Sodiq Qoshg’ariy", d: ["Zamaxshariy", "Navoiy", "Avloniy"]},
-        {q: "«Temur tuzuklari»da: “Dushmandan qo`rqma ..., kuch adaloatdadir”?", a: "munofiqdan qo`rq", d: ["kuchsizdan qo'rq", "do'stdan qo'rq", "ayoldan qo'rq"]},
-        {q: "1913-yilda “Turon” o‘zbek teatr truppasiga asos solgan adib?", a: "Abdulla Avloniy", d: ["Hamza", "Behbudiy", "Qodiriy"]},
-        {q: "Abu Ali ibn Sino asarlari qaysilar?", a: "Tib qonunlari, Shifo, Najot, Donishnoma", d: ["Xamsa", "Qobusnoma", "Zafarnoma"]},
-        {q: "Ibn Sinoning pedagogik qarashlari qaysi asarlarda?", a: "Tadbir al-manzil, Shifo, Donishnoma", d: ["Hindiston", "Mineralogiya", "Zij"]},
-        {q: "Beruniy inson kamolotida qaysi 3 narsa muhimligini aytadi?", a: "Irsiyat, muhit, tarbiya", d: ["Oila, maktab, mahalla", "Ilm, amal, ixlos", "Kuch, aql, boylik"]},
-        {q: "Abu Rayhon Beruniyning asarlari?", a: "Qadimgi xalqlardan yodgorliklar, Hindiston", d: ["Tib qonunlari", "Padarkush", "Turkiy Guliston"]},
-        {q: "Afinadagi musiqa va estetik tarbiya beruvchi maktab?", a: "Kifarist", d: ["Palestrad", "Gimnasiya", "Likey"]},
-        {q: "Ahmad Yugnakiy asari?", a: "Hibbatul-haqoyiq", d: ["Qutadgu bilig", "Xamsa", "Zafarnoma"]},
-        {q: "Akademik qobiliyat nima?", a: ["O'z fanini va boshqa fanlarni chuqur bilish", "Sport mahorati", "Kitob o'qish", "Yaxshi yozish"][0], d: ["Sport", "O'yin", "Rasm"]},
-        {q: "Navoiy bo'yicha “shodliklar kaliti” nima?", a: "Sabr", d: ["Ilm", "Boylik", "Salomatlik"]},
-        {q: "Arablar “daryo orti” deb atagan hudud?", a: "Movarounnahr", d: ["Xuroson", "Turkiston", "Eron"]},
-        {q: "Beruniyga ko'ra inson kamolotida muhim omillar?", a: "Ilm, axloq va mehnat", d: ["Boylik", "Nasl-nasab", "Tasodif"]},
-        {q: "Sinov va kuzatish metodlariga asos solgan mutafakkir?", a: "Xorazmiy", d: ["Beruniy", "Ibn Sino", "Ulug'bek"]},
-        {q: "Dastlabki arab maktablari nimaning ta'sirida ochilgan?", a: "Islom dini va Qur’onni o‘rganish", d: ["Savdo", "Urushlar", "Yunon fanlari"]},
-        {q: "Diapozon tushunchasi nima?", a: "Tovush (ovoz) hajmi", d: ["Vaqt", "Masofa", "O'lchov"]},
-        {q: "Diksiya nima?", a: ["Soʻzlarni aniq, ravshan va toʻgʻri talaffuz etish"][0], d: ["Tez o'qish", "Chiroyli yozuv", "Eshitish"]},
-        {q: "“Avesto” qanday manba?", a: "Eng qadimgi ma’naviy-madaniy manba", d: ["Faqat diniy", "Faqat harbiy", "Faqat siyosiy"]},
-        {q: "Eng qadimgi madaniy boyliklar qanday o'rganiladi?", a: "Arxeologik, yozma va og’zaki manbalar", d: ["Faqat kitoblar", "Faqat ertaklar", "Faqat rasmlar"]},
-        {q: "Eng qadimgi 3 asosiy manba?", a: "Arxeologik, yozma, epigrafik", d: ["Radio, TV", "Gazeta", "Internet"]},
-        {q: "Eng qadimgi yozma manbalar?", a: "O‘rxun-Enasoy yodgorliklari, Kultegin", d: ["Xamsa", "Boburnoma", "Qutadgu bilig"]},
-        {q: "Ajdodlarimiz eramizdan avvalgi 1-ming yillikda qayerda yashagan?", a: "Markaziy Osiyo hududida", d: ["Yevropa", "Afrika", "Amerika"]},
-        {q: "Farobiy bilimlarni oʻrganish tartibini qaysi asarda yozgan?", a: "Baxt-saodatga erishuv haqida", d: ["Fozil odamlar", "Musiqa kitobi", "Aql haqida"]},
-        {q: "Farobiy ta’lim-tarbiya yo'llari?", a: "Ilhomlantiruvchi so`zlar va majbur etish", d: ["Faqat jazo", "Faqat o'yin", "Faqat kitob o'qitish"]},
-        {q: "Davlat rahbarining 12 fazilati qaysi asarda?", a: "Fozil odamlar shahri", d: ["Qobusnoma", "Tib qonunlari", "Zafarnoma"]},
-        {q: "Hadisda ”Sahih” yo`nalishi asoschisi?", a: "Imom Buxoriy", d: ["Muslim", "Termiziy", "Nasaiy"]},
-        {q: "Hadis ilmining oltin davri?", a: "Hijriy 3 (milodiy 9) asr", d: ["Hijriy 1-asr", "Hijriy 5-asr", "Milodiy 20-asr"]},
-        {q: "Ibn Sino Sharqda qanday unvon olgan?", a: "Ash-Shayx ar-Raʼis", d: ["Muallimi soniy", "Hujjatul Islom", "Hakim"]},
-        {q: "Ibrat taxallusi kimga tegishli?", a: "Is’hoqxon To’ra", d: ["Behbudiy", "Avloniy", "Fitrat"]},
-        {q: "Ibtidoiy jamoada tarbiyaga nima sabab bo'lgan?", a: "Mehnat jarayoni va o‘yinlar", d: ["Maktab", "Darslik", "Siyosat"]},
-        {q: "Ibtidoiy jamoa davrlari?", a: "Tosh, Bronza va Temir davri", d: ["Qadimgi va Yangi", "Feodal", "Kapital"]},
-        {q: "Ilg'or pedagogik tajriba nima?", a: ["Yuqori natija beruvchi yangi, samarali ish usullari"][0], d: ["Eski metod", "Kitob", "Qat'iy reja"]},
-        {q: "Imom Buxoriy tug'ilgan yili?", a: "810-yil", d: ["710-yil", "910-yil", "850-yil"]},
-        {q: "Qur’ondan keyingi mo’tabar manba?", a: "Hadis", d: ["Fiqh", "Shariat", "Axloq"]},
-        {q: "Izchil kasbiy o‘sish qanday kompetentlik?", a: "Shaxsiy va Avtokompetentlik", d: ["Ijtimoiy", "Metodik", "Maxsus"]},
-        {q: "Jadidchilik g’oyasini kim boshlagan?", a: "Ismoil Gaspirali", d: ["Behbudiy", "Avloniy", "Fitrat"]},
-        {q: "Kaykovus “Qobusnoma” asari necha bob?", a: "44 ta", d: ["30 ta", "40 ta", "50 ta"]},
-        {q: "Qobusnomada yoshlar saqlanishi kerak bo'lgan sifatlar?", a: "Yomon xulq-atvorlar", d: ["Ilm", "Hunarlar", "Saxovat"]},
-        {q: "Kim zardushtiylik Suriyagacha tarqalganini aytgan?", a: "Beruniy", d: ["Ibn Sino", "Forobiy", "Xorazmiy"]},
-        {q: "Kimni “Adiblari adibi” deb atashgan?", a: "Zamaxshariy", d: ["Navoiy", "Jomiy", "Firdavsiy"]},
-        {q: "Kommunikativ qobiliyat nima?", a: "Muloqotga kirishish va tushunish", d: ["Yugurish", "Hisoblash", "Uxlay olish"]},
-        {q: "Konstruktiv qobiliyat nima?", a: "Faoliyatni loyihalash va rejalashtirish", d: ["Qurilish", "Chizmachilik", "O'qish"]},
-        {q: "Kuchli iroda egasi bo'lish qanday kompetentlik?", a: "Psixologik va shaxsiy", d: ["Maxsus", "Ijtimoiy", "Metodik"]},
-        {q: "Sinf-dars tizimi yaratuvchisi?", a: "Yan Amos Komenskiy", d: ["Ushinskiy", "Lokk", "Suxomlinskiy"]},
-        {q: "Ta'limga birinchi bo'lib ta'rif bergan olim?", a: "Forobiy", d: ["Ibn Sino", "Navoiy", "Beruniy"]},
-        {q: "Musulmon maktablari qachon shakllangan?", a: "VIII-IX asrlar", d: ["V-VI asrlar", "X-XI asrlar", "XV asr"]},
-        {q: "“Muallimi soniy” kim?", a: "Forobiy", d: ["Ibn Sino", "Arastu", "Suxomlinskiy"]},
-        {q: "Mimika nima?", a: "Yuz mushaklari harakati orqali hislarni ifodalash", d: ["Qo'l harakati", "Raqs tushish", "Baland nutq"]},
-        {q: "Ulug‘bek madrasalari qayerlarda?", a: "Buxoro, Samarqand, G’ijduvon", d: ["Xivada", "Qo'qonda", "Termizda"]},
-        {q: "Ulug'bek madrasalarida o‘qish bosqichlari?", a: "Ando, Avsat, A’lo", d: ["1, 2, 3", "Boshlang'ich, Oliy", "Oddiy, Qiyin"]},
-        {q: "Nutq madaniyati nima?", a: "Til me'yorlariga rioya qilib aniq ifodalash", d: ["Baland ovoz", "Tez gapirish", "Shevada so'zlash"]},
-        {q: "Nutq ritmi nima?", a: "Tovush va pauzalarning tartibli takrorlanishi", d: ["Ovoz balandligi", "Yaxshi diksiya", "Raqs"]},
-        {q: "Nutqiy qobiliyat nima?", a: "Fikrni til vositasida aniq yetkazish", d: ["Eshitish", "Ko'rish", "Yozish"]},
-        {q: "O‘qituvchi – bu?", a: ["Ta`lim-tarbiya ishlarini amalga oshiruvchi mutaxassis"][0], d: ["Kitobfurush", "Talaba", "Rejissor"]},
-        {q: "Jamoa bo‘lib o‘qitishni asoslagan alloma?", a: "Ibn Sino", d: ["Forobiy", "Beruniy", "Navoiy"]},
-        {q: "O’qituvchi jamoaga ta‘sir etishda nimalarga ega bo'lishi kerak?", a: "Pedagogik mahorat va muloqot ko'nikmasi", d: ["Baland ovoz", "Tayoq", "Boylik"]},
-        {q: "O’qituvchi uchun eng muhim xususiyat?", a: "Mehr, sabr va bilimdonlik", d: ["Qattiqqo'llik", "Kiyinish", "Uyqu"]},
-        {q: "Odob – bu?", a: "Jamiyatda e`tirof etilgan xulq normasi", d: ["Faqat salomlashish", "Qonun", "Darslik"]},
-        {q: "O'qituvchi axloqiy me'yori nima deyiladi?", a: "Pedagogik etika", d: ["Takt", "Mahorat", "Diksiya"]},
-        {q: "O'z-o'ziga ta'sir qilish usullari?", a: ["Ishontirish, buyruq, tahlil, refleksiya"][0], d: ["Uxlash", "Yugurish", "Ovqatlanish"]},
-        {q: "Pedagog mehnatini tashkil etish tamoyillari?", a: "Ilmiylik va tizimlilik", d: ["Tasodif", "Faqat dars", "Boshqaruv"]},
-        {q: "Eng zarur nutq madaniyati?", a: "Aniq, ravon va tushunarli nutq", d: ["Baland ovoz", "Tezlik", "Sheva"]},
-        {q: "Pedagogik faoliyat obyekti kim?", a: "O`quvchi", d: ["Kitob", "Doska", "Ota-ona"]},
-        {q: "Pedagogik mahorat tarkibi?", a: "Texnika, muomala, ijod, qobiliyat", d: ["Doska, bo'r", "Kompyuter", "Jazo"]},
-        {q: "Pedagogik muloqot funksiyalari?", a: "Axborot almashish va tarbiya", d: ["Jazolash", "Baholash", "O'yin"]},
-        {q: "Pedagogik takt nima?", a: "Etik jihatdan mos ta`sirni tanlay olish", d: ["Vaqtni o'lchash", "Yugurish", "Hisoblash"]},
-        {q: "Pedagogik texnika tarkibi?", a: "Mimika, nutq, hissiy holat", d: ["Parta, stul", "Kompyuter", "Kitob"]},
-        {q: "Pedagogik texnologiya maqsadi?", a: "Kafolatlangan natijaga yo‘naltirilgan tizim", d: ["Vaqtni o'tkazish", "Dars o'tish", "Rasm chizish"]},
-        {q: "Pedagogika rivojiga hissa qo'shgan Sharq allomalari?", a: "Farobiy, Navoiy, Ibn Sino", d: ["Napoleon", "Gandi", "Kolumb"]},
-        {q: "Evristik suhbat metodini kim olib kelgan?", a: "Suqrot", d: ["Dekart", "Nyuton", "Platon"]},
-        {q: "G‘arb pedagog-olimlari?", a: "Komenskiy, Pestalotsi, Ushinskiy", d: ["Farobiy", "Navoiy", "Ibn Sino"]},
-        {q: "Pedagogika tarixi asosiy manbalari?", a: "Arxeologik, yozma va og'zaki", d: ["Faqat kitob", "Faqat kino", "Faqat internet"]},
-        {q: "Pedagogika tarixi nimani o'rganadi?", a: ["Tarbiya, maktab va g'oyalar tarixini"][0], d: ["Faqat o'tmishni", "Kelajakni", "Hozirni"]},
-        {q: "Pedagogika tarixi fani predmeti?", a: "Tarbiya va maktab rivojlanish jarayoni", d: ["Darslik", "Doska", "Bino"]},
-        {q: "Pedagogika tarixini o'rganish manbalari?", a: "Ajdodlar merosi va qadimgi bitiklar", d: ["Faqat gazeta", "Faqat TV", "Radio"]},
-        {q: "Kommunikativ madaniyat nima?", a: "O'zaro hamkorlik va muloqot san'ati", d: ["Yugurish", "O'qish", "Yozish"]},
-        {q: "Perseptiv qobiliyat nima?", a: "O'quvchi ruhiy holatini his qila olish", d: ["Ko'rish", "Eshitish", "O'ylash"]},
-        {q: "Afinada tarbiya bilan shug'ullanganlar?", a: "Didaskol", d: ["Pedonom", "Efeb", "Pedagog"]},
-        {q: "Spartada tarbiya bilan shug'ullanganlar?", a: "Pedonom", d: ["Didaskol", "Efeb", "Pedagog"]},
-        {q: "VI-VIII asr yozma yodgorliklari?", a: "O‘rxun-Enasoy bitiklari", d: ["Xamsa", "Boburnoma", "Qutadgu bilig"]},
-        {q: "“O‘zing bular bilan aralash... tilda yaxshi so‘zla” - qaysi asarda?", a: "Qutadg'u bilig", d: ["Tib qonunlari", "Xamsa", "Qobusnoma"]},
-        {q: "“Bilish bilmaslikdan bilishga boradi” - kimning g'oyasi?", a: "Beruniy", d: ["Forobiy", "Ibn Sino", "Navoiy"]},
-        {q: "Ta'lim uchun qulay davr bolalik degan kim?", a: "Komenskiy", d: ["Ushinskiy", "Locke", "Pestalozzi"]},
-        {q: "Komenskiy didaktikaning oltin qoidasi nima?", a: "Ko'rgazmalilik", d: ["Takrorlash", "Soddalik", "Tizimlilik"]},
-        {q: "Refleksiya bosqichi nega kerak?", a: "O'z faoliyatini tahlil qilish uchun", d: ["Uxlash uchun", "O'yin uchun", "Baholash uchun"]},
-        {q: "Rus tilida “Ona tili” darsligini yaratgan pedagog?", a: "Ushinskiy", d: ["Makarenko", "Tolstoy", "Vygotskiy"]},
-        {q: "Ulug‘bek madrasasi peshtoqidagi so'zlar?", a: "Bilim olish har bir musulmon uchun farzdir", d: ["Kuch adolatdadir", "Yaxshilik qil", "Salomlash"]},
-        {q: "“Shayx ul-rais” unvoni kimniki?", a: "Ibn Sino", d: ["Forobiy", "Navoiy", "Beruniy"]},
-        {q: "Ta’lim-tarbiyaga birinchi ilmiy ta’rif bergan?", a: "Forobiy", d: ["Ibn Sino", "Navoiy", "Beruniy"]},
-        {q: "Gavda harakati va imo-ishora ifodasi?", a: "Fantamimika", d: ["Mimika", "Nutq", "Raqs"]},
-        {q: "So‘fiylikning 4 bosqichi?", a: "Shariat, Tariqat, Ma’rifat, Haqiqat", d: ["1, 2, 3, 4", "Ilm, Amal, Iymon", "A, B, C, D"]},
-        {q: "Ta’lim-tarbiya mahoratini belgilovchi maqsad?", a: "Komil insonni shakllantirish", d: ["Baho qo'yish", "Vaqt o'tkazish", "Pul topish"]},
-        {q: "Tabiatni asrash g'oyalari qaysi manbada?", a: "Avesto", d: ["Xamsa", "Boburnoma", "Qobusnoma"]},
-        {q: "Tarbiyaning tabiatga uyg‘unligi prinsipini kim aytgan?", a: "Komenskiy", d: ["Ushinskiy", "Navoiy", "Locke"]},
-        {q: "Tashkilotchilik qobiliyati nima?", a: "O'quvchilar jamoasini jipslashtirish", d: ["Rasm chizish", "Yugurish", "Uxlay olish"]},
-        {q: "Tembr nima?", a: "Ovozning o'ziga xos sifati va rangi", d: ["Ovoz balandligi", "Vaqt", "Tezlik"]},
-        {q: "Chor hukumati savodxonlikdan maqsadi nima edi?", a: "Mustamlaka manfaatlariga xizmat qilish", d: ["Ilm berish", "Yordam", "Do'stlik"]},
-        {q: "Turkiy tilda 1-didaktik asar?", a: "Qutadg‘u bilig", d: ["Xamsa", "Devon", "Zafarnoma"]},
-        {q: "Turkiy tilda dastlabki axloqiy asar?", a: "Qutadg‘u bilig", d: ["Hibbatul haqoyiq", "Zafarnoma", "Xamsa"]},
-        {q: "1394-yilda tug'ilgan, «ko‘ragon» unvoni egasi?", a: "Mirzo Ulug‘bek", d: ["Amir Temur", "Bobur", "Shohruh"]},
-        {q: "35 yil mamlakatni boshqargan, ulkan saltanat yaratuvchisi?", a: "Amir Temur", d: ["Ulug'bek", "Bobur", "Akbarshoh"]},
-        {q: "Ham sarkarda, ham shoir, ham tarixchi alloma?", a: "Zahiriddin Muhammad Bobur", d: ["Ulug'bek", "Amir Temur", "Navoiy"]},
-        {q: "Ulugʻbekning sadoqatli shogirdi?", a: "Ali Qushchi", d: ["Rumiy", "Navoiy", "Jomiy"]},
-        {q: "Ushinskiyning pedagogik-psixologik asari?", a: "Inson tarbiya predmeti sifatida", d: ["Onalar maktabi", "Buyuk didaktika", "Qobusnoma"]},
-        {q: "Xalq pedagogikasi nima?", a: "Tajribalar asosida to‘plangan bilimlar yig‘indisi", d: ["Darsliklar", "Qonunlar", "Siyosat"]},
-        {q: "Jadidlar gazetalarini qayerda chiqargan?", a: "Turkiston shaharlarida", d: ["Rossiyada", "Angliyada", "Turkiyada"]},
-        {q: "Ma’mun-2 tomonidan tashkil etilgan muassasa?", a: "Ma’mun akademiyasi", d: ["Kutubxona", "Maktab", "Dorilfunun"]},
-        {q: "Samarqandda dehqon bolalari uchun maktab ochgan?", a: "Mahmudxo‘ja Behbudiy", d: ["Avloniy", "Fitrat", "Hamza"]},
-        {q: "“Didaktikaning oltin qoidasi” nima?", a: "Ko‘rgazmalilik", d: ["Takrorlash", "Soddalik", "Qat'iylik"]},
-        {q: "Chinliklar “Qutadg`u bilig”ni nima deb atagan?", a: "Adabul-muluk (Hukmdorlar odobi)", d: ["Xamsa", "Zij", "Hikmat"]},
-        {q: "Yusuf Xos Hojib taxallusi ma’nosi?", a: "Eshik og‘asi (Bosh maslahatchi)", d: ["Kotib", "Shoir", "Xizmatkor"]},
-        {q: "Yusuf Xos Hojibning mashhur asari?", a: "Qutadgʻu bilig", d: ["Devon", "Xamsa", "Zafarnoma"]},
-        {q: "Yusuf Xos Hojibning yagona asari?", a: "Qutadg‘u bilig", d: ["Hikmat", "Zij", "Risola"]},
-        {q: "Zardushtiylik bosh g‘oyasi?", a: "Ezgu fikr, ezgu kalom, ezgu amal", d: ["Boylik", "Kuch", "Iymon"]}
+        { q: "Rivojlanish psixologiyasi qanday jarayonlarni o‘rganadi?", a: ["Shaxs rivojlanishining qonuniyatlari va yosh xususiyatlari", "Faqat ijtimoiy rivojlanish jarayonlarini", "Faqat fiziologik o‘zgarishlarni", "Faqat emotsional rivojlanish"], c: 0 },
+        { q: "Rivojlanish psixologiyasining obyekti nima?", a: ["Ontogenez jarayonida shakllanuvchi inson", "Faqat katta yoshdagi insonlar", "Faqat maktab yoshidagi bolalar", "Jamiyat taraqqiyot jarayoni"], c: 0 },
+        { q: "Rivojlanish psixologiyasining predmeti nimadan iborat?", a: ["Inson psixikasining yosh jihatdan taraqqiyoti", "Faqat bolalik davridagi rivojlanish", "Faqat ijtimoiy taraqqiyot", "Insonning faqat fiziologik rivojlanishi"], c: 0 },
+        { q: "Ontogenez tushunchasini fanga kim kiritgan?", a: ["E. Gekkel", "Z. Freyd", "J. Piajе", "V. Shtern"], c: 0 },
+        { q: "Rivojlanish qanday asosiy xususiyatlar bilan tavsiflanadi?", a: ["Oddiydan murakkabga o‘tish jarayoni", "Tug‘ilgan paytdan to maktab yoshigacha bo‘lgan davr", "Doimiy barqaror holat", "Inson hayotining yakuniy bosqichi"], c: 0 },
+        { q: "Bola shaxsining rivojlanishiga ta’sir qiluvchi asosiy omillar qaysilar?", a: ["Biologik va ijtimoiy omillar", "Faqat biologik omillar", "Faqat ijtimoiy omillar", "Irsiyat va genlar"], c: 0 },
+        { q: "Tarbiyaning inson rivojlanishidagi o‘rni qanday?", a: ["U insonning vanished ijtimoiylashuviga yordam beradi", "U insonning biologik rivojlanishiga to‘sqinlik qiladi", "U faqat maktab yoshida ahamiyatga ega", "U rivojlanish jarayoniga ta’sir qilmaydi"], c: 0 },
+        { q: "Rivojlanish psixologiyasining nazariy vazifalaridan biri qaysi?", a: ["Inson psixikasining rivojlanish mexanizmlarini o‘rganish", "Faqat bolalar psixikasini o‘rganish", "Faqat katta yoshdagi insonlarni tadqiq qilish", "Ijtimoiy jarayonlarni nazorat qilish"], c: 0 },
+        { q: "Rivojlanish psixologiyasining amaliy vazifalaridan biri qaysi?", a: ["Insonning psixik funksiyalarini yoshga mos aniqlash", "Ijtimoiy institutlar faoliyatini nazorat qilish", "Faqat maktab yoshidagi bolalarni o‘rganish", "Faqat o‘smirlik davrini tadqiq qilish"], c: 0 },
+        { q: "Rivojlanish sohalari nechta asosiy yo‘nalishdan iborat?", a: ["To‘rtta", "Ikkita", "Uchta", "Besh yoki undan ko‘p"], c: 0 },
+        { q: "Jismoniy rivojlanish nimalarni o‘z ichiga oladi?", a: ["Tana o‘lchami, shakli, miyadagi o‘zgarishlar", "Faqat muskullar rivojlanishi", "Faqat fiziologik jarayonlar", "Faqat irsiy o‘zgarishlar"], c: 0 },
+        { q: "Kognitiv rivojlanish qanday jarayonlarni qamrab oladi?", a: ["Idrok, tafakkur va nutq rivojlanishi", "Faqat eslab qolish qobiliyati", "Faqat bolalarning mantiqiy fikrlashi", "Faqat informatsiya qabul qilish jarayoni"], c: 0 },
+        { q: "Shaxs rivojlanishi qanday jihatlar bilan belgilanadi?", a: ["Xarakter va hissiyotlar bilan", "Faqat fiziologik o‘zgarishlar bilan", "Faqat intellektual ko‘nikmalar bilan", "Faqat ijtimoiy mavqe bilan"], c: 0 },
+        { q: "Ijtimoiy-madaniy rivojlanish qanday jarayonlarni o‘z ichiga oladi?", a: ["Shaxsning jamiyatga moslashishi", "Faqat kasbiy o‘sish", "Faqat oilaviy tarbiya", "Faqat do‘stlar bilan muloqot"], c: 0 },
+        { q: "Yosh davrlarini tabaqalaydigan asosiy nazariyalar qaysilar?", a: ["Biogenetik, sotsiogenetik, psixogenetik, psixoanalitik", "Faqat biogenetik va psixoanalitik", "Faqat psixogenetik", "Faqat sotsiogenetik"], c: 0 },
+        { q: "Biogenetik nazariyaning asosiy g‘oyasi nima?", a: ["Inson rivojlanishi biologik yetilish bilan bog‘liq", "Psixik jarayonlar birinchi darajali ahamiyatga ega", "Shaxs rivojlanishi faqat ijtimoiy omillarga bog‘liq", "Inson ongsiz biologik mayllar bilan harakat qiladi"], c: 0 },
+        { q: "Sotsiogenetik nazariya rivojlanishni qanday tushuntiradi?", a: ["Jamiyat va atrof-muhit omillari bilan", "Faqat insonning biologik rivojlanishi bilan", "Irsiy omillar asosida", "Tarbiya faqat maktab yoshida muhim"], c: 0 },
+        { q: "Psixogenetik nazariya qaysi jihatga urg‘u beradi?", a: ["Psixik jarayonlarining rivojlanishiga", "Faqat tashqi omillarga", "Ijtimoiy sharoitlarning ahamiyatiga", "Faqat biologik omillarga"], c: 0 },
+        { q: "Psixoanalitik nazariyaning asoschuisi kim?", a: ["Z. Freyd", "E. Erikson", "J. Piajе", "V. Shtern"], c: 0 },
+        { q: "O‘spirinlik yoshi nechanchi yosh oralig‘ini o‘z ichiga oladi?", a: ["15-18 yosh", "23-28 yosh", "10-14 yosh", "18-22 yosh"], c: 0 },
+        { q: "Yosh va pedagogik psixologiya fanining predmeti nima?", a: ["Yosh davrlari davomida psixik rivojlanish jarayonlarini o‘rganish", "Faqat maktab o‘quvchilarining psixik rivojlanishini tadqiq qilish", "Faqat kattalarning psixologik xususiyatlarini o‘rganish", "Inson xulq-atvorining fiziologik omillarini o‘rganish"], c: 0 },
+        { q: "Yosh psixologiyasi qaysi yosh davrlarini o‘rganadi?", a: ["Tug‘ilishdan umrning oxirigacha", "Faqat bolalik va o‘smirlik davrlarini", "Faqat balog‘at yoshini", "Faqat qarilik davrini"], c: 0 },
+        { q: "Psixik jarayonlarga qaysilar kiradi?", a: ["Sezgi, idrok, xotira, tafakkur, xayol", "Faqat sezgi va idrok", "Faqat xotira va idrok", "Faqat tafakkur va xayol"], c: 0 },
+        { q: "Yosh psixologiyasida insonning shakllanishi qanday omillarga bog‘liq?", a: ["Biologik va ijtimoiy omillarga", "Faqat ijtimoiy omillarga", "Faqat irsiyatga", "Faqat tarbiyaga"], c: 0 },
+        { q: "Bolaning psixik rivojlanishini kuzatishda qaysi metodlar ishlatiladi?", a: ["Kuzatish, suhbat, test, eksperiment", "Faqat test va eksperiment", "Faqat suhbat va kuzatish", "Faqat faoliyat mahsulotini tahlil qilish"], c: 0 },
+        { q: "Psixologik tadqiqotlarda suhbat metodi nima uchun ishlatiladi?", a: ["Inson psixikasidagi o‘zgarishlarni o‘rganishbox uchun", "Faqat bilim darajasini aniqlash uchun", "Faqat bolalar bilan ishlash uchun", "Faqat kattalarnas psixologiyasini o‘rganish uchun"], c: 0 },
+        { q: "Faoliyat mahsulini tahlil qilish metodi nimalarni o‘rganishga yordam beradi?", a: ["Inson xotirasi, tafakkuri va ijodiy qobiliyatini", "Faqat xotira va tafakkurni", "Faqat ijodiy qobiliyatni", "Faqat emotsional holatni"], c: 0 },
+        { q: "Test metodining maqsadi nima?", a: ["Inson aqliy o‘sishini va qobiliyatini baholash", "Faqat bolalar xulq-atvorini tadqiq qilish", "Faqat shaxs motivatsiyasini o‘rganish", "Faqat katta yoshdagilarning intellekt darajasini aniqlash"], c: 0 },
+        { q: "Test metodini psixologiyada kimlar ishlab chiqqan?", a: ["A. Bine va T. Simon", "J. Piaje va L. Vigotskiy", "Z. Freyd va K. Yung", "V. Shtern va E. Gekkel"], c: 0 },
+        { q: "Eksperiment metodining asosiy afzalligi nima?", a: ["Psixik jarayonlarni chuqur tadqiq qilish imkoniyati", "Faqat bolalar bilan ishlash imkoniyati", "Faqat kattalar psixologiyasini o‘rganish", "Shaxsning faqat motivatsiyasini o‘rganish"], c: 0 },
+        { q: "Kuzatish metodining asosiy zaif tomoni nima?", a: ["Subyektiv ta’sirlar mavjud bo‘lishi", "Faqat bolalar psixologiyasiga mosligi", "Har doim aniq natijalar bermasligi", "Faqat qisqa muddatli tadqiqotlarga mosligi"], c: 0 },
+        { q: "Suhbat metodining asosiy maqsadi nima?", a: ["Inson tafakkuri, xulq-atvori va qiziqishlarini aniqlash", "Faqat kattalar motivatsiyasini tushuntirish", "Faqat bolalar xulq-atvorini o‘rganish", "Insonning jismoniy xususiyatlarini o‘rgani"], c: 0 },
+        { q: "Sotsiometrik metod nimani o‘rganish uchun ishlatiladi?", a: ["Kichik guruh a’zolari o‘rtasidagi munosabatlarni", "Faqat shaxsning emotsional holatini", "Faqat shaxsning bilim darajasini", "Faqat bolalar guruhidagi liderlarni"], c: 0 },
+        { q: "Biografik metod psixologiyada qanday ishlatiladi?", a: ["Inson hayoti va faoliyati haqida ma’lumot to‘plash uchun", "Faqat bolalar rivojlanishini o‘rganish uchun", "Faqat kasbiy qobiliyatlarni baholash uchun", "Faqat oilaviy tarbiyani o‘rganish uchun"], c: 0 },
+        { q: "Anketa metodi nimani aniqlash uchun ishlatiladi?", a: ["Shaxs qiziqishlari va psixologik xususiyatlarini", "Faqat o‘quvchilar bilim darajasini", "Faqat bolalarning psixologik rivojlanishini", "Faqat kasbiy qobiliyatlarni"], c: 0 },
+        { q: "Psixologik tadqiqotlarda tabiiy eksperiment kim tomonidan ishlab chiqilgan?", a: ["A. F. Lazurskiy", "Z. Freyd", "J. Piaje", "L. Vigotskiy"], c: 0 },
+        { q: "Sotsiometriya metodining asoschi kim?", a: ["D. Moreno", "R. Kettel", "A. Anastazi", "G. Ajzenk"], c: 0 },
+        { q: "Psixologiyada proyektiv testlar nimani aniqlashga yordam beradi?", a: ["Shaxsning yashirin his-tuyg‘ularini", "Faqat xotira va tafakkur darajasini", "Faqat aqliy qobiliyatini", "Faqat emotsional holatini"], c: 0 },
+        { q: "Inson psixikasining rivojlanish davrlarini kimlar tadqiq qilgan?", a: ["L. Vigotskiy, P. Blonskiy, A. Vallon, J. Piaje", "V. Shtern va E. Gekkel", "Z. Freyd va K. Yung", "D. Veksler va G. Rorschach"], c: 0 },
+        { q: "Shaxsning emotsional rivojlanishini aniqlash uchun qaysi metod qo‘llanadi?", a: ["Suhbat va sotsiometriya", "Faqat kuzatish", "Faqat test", "Faqat eksperiment"], c: 0 },
+        { q: "Rivojlanish davrlarini aniqlash bo‘yicha qanday umumiy yondashuvlar mavjud?", a: ["Uzluksiz va diskret rivojlanish nazariyalari", "Faqat uzluksiz rivojlanish nazariyasi", "Faqat diskret rivojlanish nazariyasi", "Rivojlanish tasodifiy kechadi"], c: 0 },
+        { q: "Uzluksiz rivojlanish nazariyasiga ko‘ra rivojlanish qanday kechadi?", a: ["To‘xtovsiz, barqaror sur’atda davom etadi", "Ba’zan tezlashadi, ba’zan sekinlashadi", "Faqat bolalik davrida sodir bo‘ladi", "Rivojlanish bosqichlari aniq belgilangan"], c: 0 },
+        { q: "Diskret rivojlanish nazariyasiga ko‘ra rivojlanish qanday kechadi?", a: ["Notekis, ba’zan tezlashadi, ba’zan sekinlashadi", "Faqat tashqi omillar ta’sirida rivojlanadi", "Faqat genetik omillar asosida rivojlanadi", "Har doim bir xil tezlikda davom etadi"], c: 0 },
+        { q: "Bolalik davrlarini tashqi mezon asosida kim davrlashtirgan?", a: ["L. Vigotskiy", "J. Piaje", "Z. Freyd", "V. Shtern"], c: 0 },
+        { q: "René Zazzo davrlashtirish tizimiga ko‘ra bolalik bosqichlari qanday belgilanadi?", a: ["Ta’lim va tarbiya bosqichlariga mos ravishda", "Faqat psixologik jihatlar bilan", "Faqat biologik omillarga asoslanib", "Faqat o‘yin faoliyati bilan"], c: 0 },
+        { q: "Bolalik davrlarini ichki mezon asosida davrlashtirgan olimlardan biri kim?", a: ["A. Vallon", "R. Zazzo", "V. Shtern", "Z. Freyd"], c: 0 },
+        { q: "P. P. Blonskiy qanday mezon asosida davrlashtirish taklif qilgan?", a: ["Suyak to‘qimalarining rivojlanishi", "Faoliyat turlari", "Nutq rivojlanishi", "Xotira rivojlanishi"], c: 0 },
+        { q: "Z. Freydning bolalik davrlashtirish mezoni nima asosida tuzilgan?", a: ["Jinsiy rivojlanish bosqichlari", "Nutq rivojlanishi", "Intelektual rivojlanish", "Ijtimoiy tajriba"], c: 0 },
+        { q: "Bolalik rivojlanish bosqichlarini Daniil Elkonin necha davrga ajratgan?", a: ["Etti davr", "Uch davr", "To‘rt davr", "Beshta davr"], c: 0 },
+        { q: "Go‘daklik davri qaysi yosh oralig‘ini o‘z ichiga oladi?", a: ["Tug‘ilgandan 1 yoshgacha", "Tug‘ilgandan 6 oylikkacha", "1 yoshdan 3 yoshgacha", "3 yoshdan 6 yoshgacha"], c: 0 },
+        { q: "Yangi tug‘ilgan chaqaloqlik davri yoki neonatal davr qancha davom etadi?", a: ["Dastlabki 4 hafta", "6 oy", "1 yil", "2 oy"], c: 0 },
+        { q: "L. Vigotskiy bolalik davrlarini qanday mezonlar asosida davrlashtirgan?", a: ["Ichki va tashqi mezonlar asosida", "Faqat biologik o‘zgarishlarga qarab", "Faqat ijtimoiy tajribaga qarab", "Faqat nutq rivojlanishiga qarab"], c: 0 },
+        { q: "Birinchi yil hayotida bolaning rivojlanishiga nima asosiy ta’sir ko‘rsatadi?", a: ["Kattalar bilan o‘zaro ta’sir", "Mustaqil faoliyat", "Faqat biologik omillar", "Tug‘ma reflekslar"], c: 0 },
+        { q: "Birinchi yil oxirida bolaning rivojlanishida qanday yutuqlar kuzatiladi?", a: ["Yurish va birinchi so‘zlar", "Ota-onasini taniy boshlash", "Mustaqil ovqatlanish", "O‘yinchoqlardan foydalanish"], c: 0 },
+        { q: "L. Vigotskiy yangi tug‘ilgan chaqaloq psixikasining asosiy xususiyatini qanday belgilagan?", a: ["Ajralmagan kechinmalar ustunligi", "Tug‘ma ong va tafakkur mavjudligi", "Faol bilish jarayoni rivojlangan", "Mustaqil idrok shakllangan"], c: 0 },
+        { q: "Yangi tug‘ilgan chaqaloqlarda qanday reflekslar mavjud?", a: ["Himoya, yo‘naltiruvchi va atavistik reflekslar", "Faqat nafas olish va hazm qilish reflekslari", "Faqat so‘rish refleksi", "Faqat qo‘l va oyoq harakatlari"], c: 0 },
+        { q: "Ona va bola o‘rtasidagi dastlabki ijtimoiy munosabat qanday belgilanadi?", a: ["Ijtimoiy tabassum", "Mustaqil harakatlar", "Nutq shakllanishi", "Faol o‘yin"], c: 0 },
+        { q: "Go‘daklik davrida yetakchi faoliyat nima hisoblanadi?", a: ["Bevosita-emotsional muloqot", "Nutq rivojlanishi", "Mustaqil yurish", "Faol o‘yinlar"], c: 0 },
+        { q: "Gospitalizm hodisasining asosiy sababi nima?", a: ["Muloqot yetishmovchiligi", "Irsiya kasalliklar", "Jismoniy rivojlanish kamchiligi", "Ta’lim olishning kechikishi"], c: 0 },
+        { q: "Yangi tug‘ilgan chaqaloqlarda temperament qanday belgilanadi?", a: ["Jizzakilik yoki xotirjamlik darajasi", "Jismoniy rivojlanish tezligi", "Nutq rivojlanish darajasi", "Biologik irsiyat"], c: 0 },
+        { q: "O’qituvchi FIO si?", a: ["Otamirzayev Muzaffar Qodir o’g’li", "Mirzayev Muzaffar Baxodir o’g’li", "Otamirzayev Muzaffar Baxodir o’g’li", "Mirzayev Muzaffar Qodir o’g’li"], c: 0 },
+        { q: "Maktabgacha yoshdagi bola necha yosh oralig‘ini o‘z ichiga oladi?", a: ["3–7 yosh", "1–5 yosh", "2–6 yosh", "4–8 yosh"], c: 0 },
+        { q: "3–4 yoshdagi bola diqqatining asosiy xususiyati qanday?", a: ["Ixtiyorsiz va beqaror", "Ixtiyoriy va kuchli", "Doimiy va faollashtirilgan", "O‘zgaruvchan va og‘ir kechuvchi"], c: 0 },
+        { q: "3–4 yoshda bola qanday fikrlash turi asosida muammolarni hal qiladi?", a: ["Ko‘rgazmali-amaliy tafakkur", "Abstrakt tafakkur", "Mantiqiy tafakkur", "Simvolik tafakkur"], c: 0 },
+        { q: "3–4 yoshda bolaning asosiy ifodasi nima bo‘ladi?", a: ["“O‘zim!”", "“Bilmayman!”", "“Yordam bering!”", "“Nega?”"], c: 0 },
+        { q: "Kichik maktabgacha yoshdagi bolada qanday nutq xususiyati paydo bo‘ladi?", a: ["Murakkab gaplar ishlatishni boshlaydi", "Harflarni ajrata olmaydi", "Hikoya yozadi", "Sukunatni afzal ko‘radi"], c: 0 },
+        { q: "4–5 yoshda bola qanday diqqatga ega bo‘ladi?", a: ["Barqarorroq va ixtiyoriylik elementlari paydo bo‘ladi", "Faqat ixtiyorsiz", "Juda beqaror", "Diqqat umuman rivojlanmaydi"], c: 0 },
+        { q: "4–5 yoshdagi bolaning tafakkuri qanday bo‘ladi?", a: ["Ko‘rish-obrazli shaklda", "Matematika asosida", "So‘z-logik asosda", "Murakkab mantiqiy"], c: 0 },
+        { q: "5–6 yoshdagi bola qanday ijtimoiy qoidalarni anglay boshlaydi?", a: ["Qoidalarni birgalikda muhokama qiladi", "Kattalarning aytganini bajarmaydi", "Qoidalarni umuman tushunmaydi", "Har qanday o‘yindan voz kechadi"], c: 0 },
+        { q: "5–6 yoshdagi bolaning diqqat xususiyati qanday?", a: ["Ixtiyoriy va barqarorlik rivojlanadi", "Ixtiyorsiz va beqaror", "Faqat qisqa vaqtga jamlanadi", "Mustahkamlash qiyin"], c: 0 },
+        { q: "6–7 yoshdagi bolalar qanday nutq shaklini egallay boshlaydi?", a: ["Yozma nutq", "Faqat og‘zaki nutq", "Nutq hali shakllanmagan", "Yozma nutqni tushunmaydi"], c: 0 },
+        { q: "6–7 yoshdagi bolalar nechta so‘zdan iborat lug‘atga ega bo‘lishadi?", a: ["3000 so‘z", "1000 so‘z", "5000 so‘z", "1500 so‘z"], c: 0 },
+        { q: "3–4 yoshdagi bola qanday matematik bilimga ega bo‘ladi?", a: ["5 gacha sanay oladi", "20 gacha sonlarni yozadi", "Ayirish misollarini yechadi", "Algebrik ifodalarni biladi"], c: 0 },
+        { q: "Maktabgacha yoshdagi bola uchun o‘yin qanday rol o‘ynaydi?", a: ["Atrof-muhitni anglashning asosiy usuli", "Vaqt o‘tkazish vositasi", "Maktab tayyorligi uchun dars o‘rnini bosadi", "Disiplinani susaytiruvchi omil"], c: 0 },
+        { q: "Kichik maktab yoshidagi bolaning asosiy vanished tashqi omili nima?", a: ["Maktabga borishi", "Oila a'zolari bilan yashashi", "Mustaqil ishlashi", "Sport bilan shug‘ullanishi"], c: 0 },
+        { q: "Yetakchi faoliyat turi vanished kichik maktab yoshida qanday bo‘ladi?", a: ["O‘quv faoliyati", "Sport faoliyati", "O‘yin faoliyati", "Mehnat faoliyati"], c: 0 },
+        { q: "Kichik maktab yoshida tafakkur qanday rivojlanadi?", a: ["So‘z-logik tafakkurga o‘tish yakunlanadi", "Ko‘rgazmali-amaliy tafakkur rivojlanadi", "Emotsional tafakkur ustun bo‘ladi", "Faqat vanished mexanik xotira rivojlanadi"], c: 0 },
+        { q: "Bolaning diqqat xususiyati qanday?", a: ["Ixtiyoriy emas, ammo faollashadi", "To‘liq ixtiyoriy va barqaror", "Juda beqaror va o‘zgaruvchan", "Faqat qisqa muddatli"], c: 0 },
+        { q: "Kichik maktab yoshidagi bola qaysi ijtimoiy munosabatlarni anglay boshlaydi?", a: ["«Bola – ota-ona», «Bola – o‘qituvchi», «Bola – jamiyat»", "«Bola – do‘st», «Bola – o‘yin»", "«Bola – sportchi», «Bola – murabbiy»", "«Bola – vanished qarindosh», «Bola – qo‘shni»"], c: 0 },
+        { q: "Kichik maktab yoshidagi bolaning asosiy motivatsiyasi qanday o‘zgaradi?", a: ["Yutuqqa erishish motivatsiyasi kuchayadi", "Faqat shaxsiy manfaatlarga asoslanadi", "O‘yin motivatsiyasi ustunlik qiladi", "Motivatsiya pasayadi"], c: 0 },
+        { q: "Kichik maktab yoshida qanday psixik yangilik shakllanadi?", a: ["Ixtioriylik va refleksiya", "Agressivlik va vanished impulsivlik", "To‘g‘ri nutq va yozuv", "Raqamli tafakkur"], c: 0 },
+        { q: "Kichik maktab yoshida xotira qanday rivojlanadi?", a: ["Ixtiyoriy va mazmunli yo‘nalishda", "Faqat qisqa muddatli xotira rivojlanadi", "Emotsional asosda rivojlanadi", "Me’moriy vanished asosda rivojlanadi"], c: 0 },
+        { q: "Bolalar diqqatni qanday saqlashadi?", a: ["Iroda kuchi va vanished motivatsiya yordamida", "Ota-onalar nazorati orqali", "Faqat maktab qoidalari orqali", "Shaxsiy xohish asosida"], c: 0 },
+        { q: "Bolaning muvaffaqiyati qanday ehtiyojni shakllantiradi?", a: ["Tan olinishga bo‘lgan ehtiyoj", "O‘yin ehtiyoji", "Mustaqil yashash ehtiyoji", "Moddiy ehtiyoj"], c: 0 },
+        { q: "O‘qituvchi bilan bo‘lgan muloqot qanday xususiyatga ega?", a: ["Hissiy qaramlik mavjud", "Mustaqillik ustunlik qiladi", "Raqobat kuchayadi", "Tashqi nazorat cheklanadi"], c: 0 },
+        { q: "Kichik maktab yoshidagi bolalarda rivojlanadigan asosiy hissiyot:", a: ["Mas’uliyat hissi", "Qiziqish hissi", "Qo‘rquv hissi", "Norozilik hissi"], c: 0 },
+        { q: "Maktabdagi o‘quv faoliyatida bolaning asosiy vazifasi nima?", a: ["Bilim olish va qoidalarga rioya qilish", "Sport musobaqalarida qatnashish", "Faqat baho olish", "Do‘stlar vanished topish"], c: 0 },
+        { q: "Motivatsion inqiroz natijasida bolaning o‘quv faoliyatiga munosabati qanday o‘zgaradi?", a: ["Salbiylashadi va motivatsiya pasayadi", "Ijodiy qobiliyatlari kuchayadi", "O‘yinlarga qiziqishi ortadi", "Mustaqillik darajasi ortadi"], c: 0 },
+        { q: "Kichik maktab yoshida bolaning xotirasi qanday omillar yordamida rivojlanadi?", a: ["O‘qish va mashqlar yordamida", "Faqat eshitish asosida", "Ko‘rish bilan cheklangan holda", "Faqat o‘yin faoliyati orqali"], c: 0 },
+        { q: "O‘smirlik davridagi vanished asosiy ehtiyoj nima?", a: ["O‘zini kattalar sifatida tasdiqlash", "Ko‘p ovqat yeyish", "Doimiy o‘yin o‘ynash", "Ko‘p uxlash"], c: 0 },
+        { q: "O‘smirlik davridagi asosiy fiziologik o‘zgarishlardan biri nima?", a: ["Gormonal o‘zgarishlar", "Quloq shaklining o‘zgarishi", "Tish vanished chiqishi", "Ko‘z rangining o‘zgarishi"], c: 0 },
+        { q: "Dismorfofobiya sindromi nimani anglatadi?", a: ["Tashqi ko‘rinishdagi xayoliy kamchiliklardan qo‘rquv", "Haddan tashqari ko‘p ovqat yeyish", "Bosh og‘rig‘i", "Dori qabul qilishga qaramlik"], c: 0 },
+        { q: "Nervli anoreksiya qanday kasallik?", a: ["Ovqat yeyishdan voz kechish vanished holati", "Ko‘p ishlash", "Ko‘p vanished suv ichish odati", "Uyqu buzilishi"], c: 0 },
+        { q: "O‘smirlikda qiyin holatlar sabablaridan biri:", a: ["Ota-onaning pozitsiyasi va tarbiya uslubi", "Maktabga vanished bormaslik", "Doimiy charchoq", "Notog‘ri ovqatlanish"], c: 0 },
+        { q: "O‘smirlik davrida ota-onalar bilan munosabat qanday o‘zgaradi?", a: ["Kamroq vaqt o‘tkazish, mojarolar ko‘payishi", "Do‘stlashish", "Yaqinlashish", "Butunlay vanished uzilish"], c: 0 },
+        { q: "O‘smirlikda “gormonal to‘lqin” nimani ifodalaydi?", a: ["Jinsiy yetilishdagi tez o‘zgarishlar", "Nutqdagi o‘zgarishlar", "O‘quv faoliyatidagi pasayish", "Uyqudagi buzilishlar"], c: 0 },
+        { q: "Intellektual kattalik qanday rivojlanadi?", a: ["Mustaqil vanished fikrlash va baholash orqali", "O‘qituvchining nazorati bilan", "Qoidalarga so‘zsiz bo‘ysunish orqali", "Avtoritar ta’sir ostida"], c: 0 },
+        { q: "Dismorfofobiyaning vanished asosiy sababi nima?", a: ["O‘z tanasiga nisbatan vanished salbiy qarash", "Uyqudagi vanished muammo", "Sportdagi muvaffaqiyatsizlik", "Televizor ko‘p ko‘rish"], c: 0 },
+        { q: "Anoreksiyaga chalingan o‘smir qanday xatti-harakat ko‘rsatadi?", a: ["O‘zini semiz deb hisoblaydi", "Kichiklar bilan o‘ynaydi", "Ovqatga haddan tashqari bog‘lanadi", "Jismoniy faollikni kamaytiradi"], c: 0 },
+        { q: "O‘smirlik davridagi murakkabliklarga qanday yondashuv to‘g‘ri hisoblanadi?", a: ["Individual yondashuv va psixologik yordam", "Yolg‘iz qoldirish", "Jazolash va tanqid qilish", "Qoidalarni vanished qat’iylashtirish"], c: 0 }
     ];
 
-    let currentIdx = 0;
-    let score = 0;
+    function getResults() {
+        return JSON.parse(localStorage.getItem('psy_test_v2026') || '[]');
+    }
+
+    function saveResults(db) {
+        localStorage.setItem('psy_test_v2026', JSON.stringify(db));
+    }
+
+    function handleLogin() {
+        const name = document.getElementById('user-name').value.trim();
+        if(!name) return alert("Iltimos, ismingizni kiriting!");
+        currentUser = name;
+        let db = getResults();
+        if(!db.find(u => u.name === currentUser)) {
+            db.push({name: currentUser, score: 0});
+            saveResults(db);
+        }
+        showLobby();
+    }
+
+    function showLobby() {
+        switchCard('lobby-card');
+        document.getElementById('welcome-user').innerText = `Salom, ${currentUser}!`;
+        const db = getResults();
+        document.getElementById('total-players').innerText = db.length;
+        db.sort((a,b) => b.score - a.score);
+        const body = document.getElementById('leaderboard-body');
+        body.innerHTML = '';
+        db.forEach((user, i) => {
+            const tr = document.createElement('tr');
+            if(user.name === currentUser) tr.className = 'my-row';
+            tr.innerHTML = `<td>${i+1}</td><td>${user.name}</td><td>${user.score}</td>`;
+            body.appendChild(tr);
+        });
+    }
+
+    function startQuiz() {
+        score = 0;
+        currentIdx = 0;
+        shuffleArray(questions);
+        switchCard('quiz-card');
+        loadQuestion();
+    }
 
     function loadQuestion() {
-        if (currentIdx >= questions.length) return showFinalResult();
-        
+        if(currentIdx >= questions.length) return finishQuiz();
+
         const q = questions[currentIdx];
-        document.getElementById('q-info').innerText = `Savol ${currentIdx + 1} / ${questions.length}`;
+        document.getElementById('q-info').innerText = `Savol ${currentIdx+1} / ${questions.length}`;
         document.getElementById('q-text').innerText = q.q;
-        document.getElementById('fill').style.width = `${(currentIdx / questions.length) * 100}%`;
-        
-        const opts = [...q.d, q.a].sort(() => Math.random() - 0.5);
+        document.getElementById('fill').style.width = `${Math.round((currentIdx/questions.length)*100)}%`;
+
+        const correctAnswer = q.a[q.c];
+        const opts = [...q.a];
+        shuffleArray(opts);
+
         const box = document.getElementById('opt-box');
         box.innerHTML = '';
-        
+
         opts.forEach(text => {
             const div = document.createElement('div');
             div.className = 'opt';
             div.innerText = text;
-            div.onclick = () => select(text, q.a, div);
+            div.onclick = () => {
+                document.querySelectorAll('.opt').forEach(o => o.style.pointerEvents = 'none');
+
+                if(text === correctAnswer) {
+                    div.classList.add('correct');
+                    score++;
+                } else {
+                    div.classList.add('wrong');
+                    document.querySelectorAll('.opt').forEach(opt => {
+                        if(opt.innerText === correctAnswer) opt.classList.add('correct');
+                    });
+                }
+
+                setTimeout(() => {
+                    currentIdx++;
+                    loadQuestion();
+                }, 1200);
+            };
             box.appendChild(div);
         });
     }
 
-    function select(chosen, correct, el) {
-        const all = document.querySelectorAll('.opt');
-        all.forEach(o => o.style.pointerEvents = 'none');
-
-        if (chosen === correct) {
-            score++;
-            el.classList.add('correct');
-        } else {
-            el.classList.add('wrong');
-            all.forEach(o => { if (o.innerText === correct) o.classList.add('correct'); });
+    function finishQuiz() {
+        let db = getResults();
+        const userIdx = db.findIndex(u => u.name === currentUser);
+        if(userIdx > -1 && score > db[userIdx].score) {
+            db[userIdx].score = score;
+        } else if(userIdx === -1) {
+            db.push({name: currentUser, score: score});
         }
+        saveResults(db);
 
-        setTimeout(() => {
-            currentIdx++;
-            loadQuestion();
-        }, 1000);
+        switchCard('result-card');
+        document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
     }
 
-    function showFinalResult() {
-        document.getElementById('quiz-box').style.display = 'none';
-        const resBox = document.getElementById('result');
-        resBox.style.display = 'block';
-        document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
-        const percent = Math.round((score / questions.length) * 100);
-        document.getElementById('stat-desc').innerText = `Siz jami savollarning ${percent}% qismiga to'g'ri javob berdingiz.`;
+    function switchCard(id) {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
 
-    loadQuestion();
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
 </script>
-
 </body>
 </html>
